@@ -1,0 +1,58 @@
+﻿
+@page "/DeleteTicket/{id}"
+@using System.Net.Http.Json;
+@inject NavigationManager navigationManager
+
+<h3>Delete Product</h3>
+
+<p>Are you sure you want to delete this ticket with id :<b>@id</b></p>
+<br />
+
+<table class="table table-bordered">
+    <tr>
+        <td>ID</td>
+        <td>@ticket.Id</td>
+    </tr>
+    <tr>
+        <td>Subject</td>
+        <td>@ticket.Subject</td>
+    </tr>
+    <tr>
+        <td>Ticket Type</td>
+        <td>@ticket.TicketType</td>
+    </tr>
+</table>
+<div>
+    <input type="button" class="btn btn-danger" @onclick="@DeleteTicketInfo" value="Delete" />
+    <input type="button" class="btn btn-dark" @onclick="@Cancel" value="Cancel" />
+</div>
+
+@code {
+
+    [Parameter]
+    public string id { get; set; }
+    Ticket ticket = new Ticket();
+    HttpClient http = new HttpClient();
+
+    protected override async Task OnInitializedAsync()
+    {
+
+        ticket = await http.GetFromJsonAsync<Ticket>(SharedInfo.ServerIp + "api/Ticket/" + id);
+    }
+
+
+
+    protected async Task DeleteTicketInfo()
+    {
+
+        await http.DeleteAsync(SharedInfo.ServerIp + "api/Ticket/" + id);
+
+        navigationManager.NavigateTo("Tickets");
+    }
+
+
+    void Cancel()
+    {
+        navigationManager.NavigateTo("Tickets");
+    }
+}
