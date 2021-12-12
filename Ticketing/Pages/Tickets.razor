@@ -1,0 +1,57 @@
+﻿@page "/Tickets"
+
+@using System.Net.Http.Json;
+
+<h3>Tickets</h3>
+<a href="/AddTicket" class="btn btn-info">New Ticket</a>
+
+@if (ticketList == null)
+{
+
+    <p>Loading...</p>
+}
+else
+{
+
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Subject</th>
+                <th>Ticket Type</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var ticket in ticketList)
+            {
+                <tr>
+                    <td>@ticket.Id</td>
+                    <td>@ticket.Subject</td>
+                    <td>@ticket.TicketType</td>
+                    <td>
+                        <a href="/AddTicket/@ticket.Id" class="btn btn-primary">Edit</a>
+                        <a href="/DeleteTicket/@ticket.Id" class="btn btn-danger">Delete</a>
+                    </td>
+
+                </tr>
+
+            }
+        </tbody>
+    </table>
+
+}
+
+@code {
+    List<Ticket> ticketList;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadTicketsData();
+    }
+
+    protected async Task LoadTicketsData()
+    {
+        HttpClient http = new HttpClient();
+        ticketList = await http.GetFromJsonAsync<List<Ticket>>("https://localhost:44334/api/Ticket");
+    }
+}
